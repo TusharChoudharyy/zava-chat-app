@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 
 const Verify = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -9,10 +11,40 @@ const Verify = () => {
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
   };
-const navigate = useNavigate();
-  const handleSubmit = () => {
- navigate("/home");
-    // TODO: Send OTP to backend for verification
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || ""; // Email passed from AuthPage
+
+  const handleSubmit = async () => {
+    const otpCode = otp.join(""); // Combine ["1","2","3","4"] → "1234"
+
+    if (!otpCode || otpCode.length !== 4) {
+      toast.error("Please enter the 4-digit OTP");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/verify-otp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp: otpCode }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("OTP verified successfully!");
+        navigate("/home");
+      } else {
+        toast.error(data.error || "OTP verification failed");
+      }
+    } catch (err) {
+      console.error("Error verifying OTP:", err);
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   return (

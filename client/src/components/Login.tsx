@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Mail, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 // import { FcGoogle } from "react-icons/fc";
 
 export default function AuthPage() {
@@ -15,11 +16,40 @@ const navigate = useNavigate();
     setInputValue("");
   };
 
-  const 
-  handleVerify = () => {
- navigate("/verify");
-    // TODO: redirect to /verify or send OTP
-  };
+
+
+const handleVerify = async () => {
+  if (!inputValue.trim()) {
+    toast.error("Please enter a valid email or phone number");
+    return;
+  }
+
+  try {
+    const payload =
+      method === "email"
+        ? { email: inputValue }
+        : { phone: `${countryCode}${inputValue}` };
+
+    const response = await fetch("http://localhost:5000/api/auth/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success("OTP sent successfully!");
+      navigate("/verify", { state: { email: inputValue } });
+    } else {
+      toast.error(data.error || "Failed to send OTP");
+    }
+  } catch (err) {
+    console.error("Error sending OTP:", err);
+    toast.error("Something went wrong. Please try again.");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-100 px-4">

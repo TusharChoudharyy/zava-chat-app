@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { useNavigate } from "react-router-dom";
 
 const ZavaStartupLoader = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const zPathRef = useRef<SVGPathElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const linesRef = useRef<HTMLDivElement[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
@@ -31,7 +33,7 @@ const ZavaStartupLoader = () => {
       "-=0.2"
     );
 
-    // Animate Zava.chat text with typing feel
+    // Animate Zava.chat text
     tl.fromTo(
       textRef.current,
       { opacity: 0, y: 20, scale: 0.95 },
@@ -39,7 +41,7 @@ const ZavaStartupLoader = () => {
       "-=0.4"
     );
 
-    // Auto dismiss after everything
+    // Auto dismiss and redirect
     tl.to(containerRef.current, {
       opacity: 0,
       duration: 0.6,
@@ -48,9 +50,10 @@ const ZavaStartupLoader = () => {
         if (containerRef.current) {
           containerRef.current.style.display = "none";
         }
+        navigate("/login");
       },
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <div

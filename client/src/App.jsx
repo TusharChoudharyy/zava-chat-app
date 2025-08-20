@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { Toaster } from "react-hot-toast";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Splash from "./components/Splash";
@@ -12,6 +12,7 @@ function App() {
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Splash />} />
         <Route path="/login" element={<Login />} />
