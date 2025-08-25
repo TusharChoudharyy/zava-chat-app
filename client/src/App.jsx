@@ -6,6 +6,7 @@ import Splash from "./components/Splash";
 import Login from "./components/Login";
 import Verify from "./pages/Verify";
 import Home from "./components/Home";
+import JoinMeeting from "./components/Features/JoinMeeting";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -18,6 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/Verify" element={<Verify/>} />
         <Route path="/Home" element={<Home/>} />
+          <Route path="/join/:roomId" element={<JoinMeeting onSendMessage={() => {}} />} />
       </Routes>
     </>
   );

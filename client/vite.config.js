@@ -18,6 +18,9 @@ export default defineConfig({
       }
     }
   },
+  define: {
+    global: "window", // 👈 simple-peer ke liye
+  },
 })
 
 
